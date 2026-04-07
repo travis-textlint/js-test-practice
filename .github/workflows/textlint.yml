@@ -24,4 +24,3 @@ jobs:
 
       - name: Run textlint
         run: npx textlint "**/*.md"
-``
