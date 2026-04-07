@@ -1,26 +1,24 @@
 name: textlint
 
 on:
-  pull_request:
   push:
-    branches: [ main ]
+    branches:
+      - main
+  pull_request:
 
 jobs:
   textlint:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 18
           cache: npm
 
-      - name: Install dependencies
-        run: npm install
+      - run: npm install
 
-      - name: Run textlint
-        run: npx textlint "**/*.md"
+      - run: npx textlint "**/*.md"
+``
