@@ -28,7 +28,7 @@ jobs:
       # PR のときだけ textlint を実行
       - name: Run textlint
         if: github.event_name == 'pull_request'
-        run: npx textlint ./docs/**/*.md
+        run: npx textlint "**/*.md"
         continue-on-error: true
 
       # PR の textlint が失敗したときだけ通知
