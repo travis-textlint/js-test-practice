@@ -20,18 +20,22 @@ jobs:
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
+      # リポジトリをチェックアウト
       - uses: actions/checkout@v4
 
+      # 依存関係をインストール
       - name: Install dependencies
         run: npm install
 
-      # PR のときだけ textlint を実行
+      # textlint を実行（PR のときだけ）
       - name: Run textlint
         if: github.event_name == 'pull_request'
-        run: npx textlint "**/*.md"
+        run: |
+          cd $GITHUB_WORKSPACE
+          npx textlint "**/*.md"
         continue-on-error: true
 
-      # PR の textlint が失敗したときだけ通知
+      # textlint が失敗したときだけ Slack 通知（PR）
       - name: Notify Slack on PR failure
         if: failure() && github.event_name == 'pull_request'
         uses: slackapi/slack-github-action@v1.24.0
@@ -61,7 +65,7 @@ jobs:
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
-      # main push が成功したときだけ通知
+      # main push が成功したときだけ Slack 通知
       - name: Notify Slack on main success
         if: success() && github.ref == 'refs/heads/main'
         uses: slackapi/slack-github-action@v1.24.0
