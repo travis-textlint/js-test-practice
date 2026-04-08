@@ -11,17 +11,27 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # Slack test（必ず実行される）
+      - name: Slack test (always)
+        if: always()
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          payload: '{"text": "Slack test message from GitHub Actions"}'
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
       - uses: actions/checkout@v4
 
       - name: Install dependencies
         run: npm install
 
+      # PR のときだけ textlint を実行
       - name: Run textlint
         if: github.event_name == 'pull_request'
         run: npx textlint ./docs/**/*.md
         continue-on-error: true
 
-      # PR の lint が失敗したときだけ通知
+      # PR の textlint が失敗したときだけ通知
       - name: Notify Slack on PR failure
         if: failure() && github.event_name == 'pull_request'
         uses: slackapi/slack-github-action@v1.24.0
@@ -51,7 +61,7 @@ jobs:
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
-      # main に push されたときだけ成功通知
+      # main push が成功したときだけ通知
       - name: Notify Slack on main success
         if: success() && github.ref == 'refs/heads/main'
         uses: slackapi/slack-github-action@v1.24.0
@@ -73,14 +83,5 @@ jobs:
                 }
               ]
             }
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-
-      # Slack test（必ず通知）
-      - name: Slack test (always)
-        if: always()
-        uses: slackapi/slack-github-action@v1.24.0
-        with:
-          payload: '{"text": "Slack test message from GitHub Actions"}'
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
