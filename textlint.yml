@@ -21,10 +21,13 @@ jobs:
         run: |
           npx textlint "**/*.md" > textlint_result.txt 2>&1 || true
 
-      - name: Encode textlint result
-        id: encode
+      - name: Trim textlint result
+        id: trim
         run: |
-          echo "encoded=$(base64 -w 0 textlint_result.txt)" >> $GITHUB_OUTPUT
+          head -n 200 textlint_result.txt > trimmed_result.txt
+          echo "result<<EOF" >> $GITHUB_OUTPUT
+          cat trimmed_result.txt >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
 
       - name: Notify Slack with textlint result
         if: always()
@@ -46,9 +49,24 @@ jobs:
                       "title": "Branch",
                       "value": "${{ github.ref }}",
                       "short": true
+                    },
+                    {
+                      "title": "Commit Message",
+                      "value": "${{ github.event.head_commit.message || github.event.pull_request.title }}",
+                      "short": false
+                    },
+                    {
+                      "title": "Author",
+                      "value": "${{ github.actor }}",
+                      "short": true
+                    }
+                    ${
+                      github.event_name == 'pull_request'
+                      && ',{"title":"PR Number","value":"#${{ github.event.pull_request.number }}","short":true}'
+                      || ''
                     }
                   ],
-                  "text": "Base64 encoded log:\n${{ steps.encode.outputs.encoded }}",
+                  "text": "```\n${{ steps.trim.outputs.result }}\n```",
                   "footer": "GitHub Actions"
                 }
               ]
