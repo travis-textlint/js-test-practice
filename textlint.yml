@@ -73,12 +73,13 @@ jobs:
               ]
             }
         env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+      # Slack test（必ず通知）
       - name: Slack test (always)
         if: always()
         uses: slackapi/slack-github-action@v1.24.0
         with:
           payload: '{"text": "Slack test message from GitHub Actions"}'
         env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
