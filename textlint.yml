@@ -24,6 +24,14 @@ jobs:
         run: |
           npx textlint "**/*.md" > textlint_result.txt 2>&1 || true
 
+      # textlint の結果を Slack に渡すためにファイル内容を出力として設定
+      - name: Set textlint result output
+        id: set_output
+        run: |
+          echo "result<<EOF" >> $GITHUB_OUTPUT
+          cat textlint_result.txt >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
       # textlint の結果を Slack に毎回送る
       - name: Notify Slack with textlint result
         if: always()
@@ -47,18 +55,10 @@ jobs:
                       "short": true
                     }
                   ],
-                  "text": "```\n${{ steps.textlint.outputs.result }}\n```",
+                  "text": "```\n${{ steps.set_output.outputs.result }}\n```",
                   "footer": "GitHub Actions"
                 }
               ]
             }
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-
-      # textlint の結果を Slack に渡すためにファイル内容を出力として設定
-      - name: Set textlint result output
-        id: set_output
-        run: |
-          echo "result<<EOF" >> $GITHUB_OUTPUT
-          cat textlint_result.txt >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
