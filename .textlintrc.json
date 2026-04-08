@@ -1,5 +1,9 @@
 {
   "rules": {
-    "preset-ja-technical-writing": true
+    "preset-ja-technical-writing": true,
+    "preset-ja-spacing": true,
+    "ja-no-mixed-period": true,
+    "no-todo": true,
+    "no-dead-link": true
   }
 }
