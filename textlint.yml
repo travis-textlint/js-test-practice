@@ -11,28 +11,21 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # リポジトリをチェックアウト
       - uses: actions/checkout@v4
 
-      # 依存関係をインストール
       - name: Install dependencies
         run: npm install
 
-      # textlint を実行（成功・失敗に関係なくログを保存）
       - name: Run textlint
         id: textlint
         run: |
           npx textlint "**/*.md" > textlint_result.txt 2>&1 || true
 
-      # textlint の結果を Slack に渡すためにファイル内容を出力として設定
-      - name: Set textlint result output
-        id: set_output
+      - name: Encode textlint result
+        id: encode
         run: |
-          echo "result<<EOF" >> $GITHUB_OUTPUT
-          cat textlint_result.txt >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
+          echo "encoded=$(base64 -w 0 textlint_result.txt)" >> $GITHUB_OUTPUT
 
-      # textlint の結果を Slack に毎回送る
       - name: Notify Slack with textlint result
         if: always()
         uses: slackapi/slack-github-action@v1.24.0
@@ -55,7 +48,7 @@ jobs:
                       "short": true
                     }
                   ],
-                  "text": "```\n${{ steps.set_output.outputs.result }}\n```",
+                  "text": "Base64 encoded log:\n${{ steps.encode.outputs.encoded }}",
                   "footer": "GitHub Actions"
                 }
               ]
