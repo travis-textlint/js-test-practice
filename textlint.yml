@@ -1,11 +1,10 @@
 name: textlint
 
 on:
-  workflow_dispatch:
+  pull_request:
   push:
     branches:
       - main
-  pull_request:
 
 jobs:
   textlint:
@@ -18,31 +17,60 @@ jobs:
         run: npm install
 
       - name: Run textlint
+        if: github.event_name == 'pull_request'
         run: npx textlint ./docs/**/*.md
 
-      - name: Force fail for Slack test
-        run: exit 1
-
-      # 失敗時（PR のときだけ通知）
+      # PR の lint が失敗したときだけ通知
       - name: Notify Slack on PR failure
         if: failure() && github.event_name == 'pull_request'
         uses: slackapi/slack-github-action@v1.24.0
         with:
           payload: |
             {
-              "text": "❌ textlint failed on PR #${{ github.event.pull_request.number }} by ${{ github.actor }}"
+              "attachments": [
+                {
+                  "color": "#ff0000",
+                  "title": "❌ textlint failed on PR #${{ github.event.pull_request.number }}",
+                  "fields": [
+                    {
+                      "title": "Author",
+                      "value": "${{ github.actor }}",
+                      "short": true
+                    },
+                    {
+                      "title": "Branch",
+                      "value": "${{ github.head_ref }}",
+                      "short": true
+                    }
+                  ],
+                  "footer": "GitHub Actions"
+                }
+              ]
             }
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
-      # 成功時（main push のときだけ通知）
-      - name: Notify Slack on success
+      # main に push されたときだけ成功通知
+      - name: Notify Slack on main success
         if: success() && github.ref == 'refs/heads/main'
         uses: slackapi/slack-github-action@v1.24.0
         with:
           payload: |
             {
-              "text": "✅ textlint succeeded on main branch"
+              "attachments": [
+                {
+                  "color": "#36a64f",
+                  "title": "✅ textlint succeeded on main",
+                  "fields": [
+                    {
+                      "title": "Commit",
+                      "value": "${{ github.event.head_commit.message }}",
+                      "short": false
+                    }
+                  ],
+                  "footer": "GitHub Actions"
+                }
+              ]
             }
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
