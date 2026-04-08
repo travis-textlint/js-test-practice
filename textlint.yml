@@ -83,3 +83,7 @@ jobs:
           payload: '{"text": "Slack test message from GitHub Actions"}'
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      - name: Run textlint
+        if: github.event_name == 'pull_request'
+        run: npx textlint ./docs/**/*.md
+        continue-on-error: true
