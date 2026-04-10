@@ -23,11 +23,20 @@ jobs:
         run: npm ci
 
       - name: Jest テスト実行
-        run: npm test
+        id: jest
+        run: |
+          npm test > jest_output.txt || true
+          echo "result<<EOF" >> $GITHUB_OUTPUT
+          cat jest_output.txt >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
 
       - name: textlint 実行
-        run: textlint "docs/**/*.md" "test.md"
-        continue-on-error: true
+        id: textlint
+        run: |
+          textlint "docs/**/*.md" "test.md" > textlint_output.txt || true
+          echo "result<<EOF" >> $GITHUB_OUTPUT
+          cat textlint_output.txt >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
 
       - name: 差分情報取得
         id: diff
@@ -56,7 +65,24 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "📌 *リポジトリ:* ${{ github.repository }}\n📝 *PR:* ${{ github.event.pull_request.title }}\n🔗 *URL:* ${{ github.event.pull_request.html_url }}\n👤 *実行者:* ${{ github.actor }}\n📄 *変更ファイル数:* ${{ steps.diff.outputs.files }}\n📊 *差分行数:* ${{ steps.diff.outputs.lines }}\n⏱️ *実行時間:* $(( ${{ steps.end.outputs.time }} - ${{ steps.start.outputs.time }} )) 秒\n📣 *結果:* ${{ job.status }}"
+                    "text": "*📌 リポジトリ:* `${{ github.repository }}`\n*📝 PR:* `${{ github.event.pull_request.title }}`\n*🔗 URL:* ${{ github.event.pull_request.html_url }}\n*👤 実行者:* `${{ github.actor }}`\n*📄 変更ファイル数:* `${{ steps.diff.outputs.files }}`\n*📊 差分行数:* `${{ steps.diff.outputs.lines }}`\n*⏱️ 実行時間:* `$(( ${{ steps.end.outputs.time }} - ${{ steps.start.outputs.time }} )) 秒`\n*📣 結果:* `${{ job.status }}`"
+                  }
+                },
+                {
+                  "type": "divider"
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*🧪 Jest 結果:*\n```${{ steps.jest.outputs.result }}```"
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*✏️ textlint 結果:*\n```${{ steps.textlint.outputs.result }}```"
                   }
                 }
               ]
