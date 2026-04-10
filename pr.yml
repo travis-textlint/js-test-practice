@@ -10,18 +10,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Node.js セットアップ
         uses: actions/setup-node@v4
         with:
           node-version: 20
 
-      - name: Install dependencies
+      - name: 依存関係インストール
         run: npm ci
 
-      - name: Run tests
+      - name: Jest テスト実行
         run: npm test
 
-      - name: Run textlint
+      - name: textlint 実行
         run: npm run lint:text
 
       - name: Slack 通知（失敗時のみ）
@@ -39,7 +39,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "*リポジトリ:* ${{ github.repository }}\n*PR タイトル:* ${{ github.event.pull_request.title }}\n*実行者:* ${{ github.actor }}"
+                    "text": "*リポジトリ:* ${{ github.repository }}\n*PR タイトル:* ${{ github.event.pull_request.title }}\n*実行者:* ${{ github.actor }}\n*ブランチ:* ${{ github.head_ref }}"
                   }
                 }
               ]
