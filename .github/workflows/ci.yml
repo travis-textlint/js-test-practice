@@ -1,36 +1,31 @@
 name: CI
 
 on:
-  pull_request:
   push:
-    branches:
-      - main
+    branches: [ main ]
+  pull_request:
 
 jobs:
-  ci:
+  build:
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install dependencies
-        run: npm install
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
 
-      - name: Run Node.js tests
-        run: npm test || true
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm test
 
       - name: Run textlint
-        id: textlint
-        run: |
-          npx textlint "**/*.md" > textlint_result.txt 2>&1 || true
-
-      - name: Trim textlint result
-        id: trim
-        run: |
-          head -n 200 textlint_result.txt > trimmed_result.txt
-          echo "result<<EOF" >> $GITHUB_OUTPUT
-          cat trimmed_result.txt >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
+        run: npm run lint:text
+        continue-on-error: true
 
       - name: Notify Slack
         if: always()
@@ -38,36 +33,7 @@ jobs:
         with:
           payload: |
             {
-              "attachments": [
-                {
-                  "color": "${{ steps.textlint.outcome == 'success' && '#36a64f' || '#ff0000' }}",
-                  "title": "CI result",
-                  "fields": [
-                    {
-                      "title": "Status",
-                      "value": "${{ steps.textlint.outcome }}",
-                      "short": true
-                    },
-                    {
-                      "title": "Branch",
-                      "value": "${{ github.ref }}",
-                      "short": true
-                    },
-                    {
-                      "title": "Commit Message",
-                      "value": "${{ github.event.head_commit.message || github.event.pull_request.title }}",
-                      "short": false
-                    },
-                    {
-                      "title": "Author",
-                      "value": "${{ github.actor }}",
-                      "short": true
-                    }
-                  ],
-                  "text": "```\n${{ steps.trim.outputs.result }}\n```",
-                  "footer": "GitHub Actions"
-                }
-              ]
+              "text": "CI finished for ${{ github.repository }}: ${{ job.status }}"
             }
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
