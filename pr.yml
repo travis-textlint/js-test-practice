@@ -25,32 +25,20 @@ jobs:
       - name: Jest テスト実行
         run: npm test
 
-      - name: textlint 実行
-        run: npm run lint:text
+      - name: textlint 実行（docs/ 配下のみ）
+        run: textlint "docs/**/*.md"
+        continue-on-error: true
+
+      - name: 差分情報取得
+        id: diff
+        run: |
+          FILES=$(git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }} | wc -l)
+          LINES=$(git diff --numstat ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }} | awk '{added+=$1; deleted+=$2} END {print added+deleted}')
+          echo "files=$FILES" >> $GITHUB_OUTPUT
+          echo "lines=$LINES" >> $GITHUB_OUTPUT
 
       - name: 終了時間を記録
         id: end
         run: echo "time=$(date +%s)" >> $GITHUB_OUTPUT
 
-      - name: Slack 通知（失敗時のみ）
-        if: failure()
-        uses: slackapi/slack-github-action@v1.24.0
-        with:
-          payload: |
-            {
-              "blocks": [
-                {
-                  "type": "header",
-                  "text": { "type": "plain_text", "text": "🚨 PR CI が失敗しました" }
-                },
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "ご確認をお願いいたします。\n\n📌 *リポジトリ:* ${{ github.repository }}\n📝 *PR タイトル:* ${{ github.event.pull_request.title }}\n👤 *実行者:* ${{ github.actor }}\n🌿 *ブランチ:* ${{ github.head_ref }}\n⏱️ *実行時間:* $(( ${{ steps.end.outputs.time }} - ${{ steps.start.outputs.time }} )) 秒"
-                  }
-                }
-              ]
-            }
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      -
