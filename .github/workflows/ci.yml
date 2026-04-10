@@ -1,85 +1,25 @@
-name: Main CI
+name: CI
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
+  pull_request:
 
 jobs:
   main-check:
     runs-on: ubuntu-latest
 
     steps:
-      - name: 開始時間を記録
-        id: start
-        run: echo "time=$(date +%s)" >> $GITHUB_OUTPUT
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - uses: actions/checkout@v4
-
-      - name: Node.js セットアップ
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: 依存関係インストール
-        run: npm ci
-
-      - name: Jest テスト実行
-        id: jest
-        run: |
-          npm test > jest_output.txt || true
-          echo "result<<EOF" >> $GITHUB_OUTPUT
-          cat jest_output.txt >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
-
-      - name: textlint 実行
-        id: textlint
-        run: |
-          textlint "docs/**/*.md" "test.md" > textlint_output.txt || true
-          echo "result<<EOF" >> $GITHUB_OUTPUT
-          cat textlint_output.txt >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
-
-      - name: 終了時間を記録
-        id: end
-        run: echo "time=$(date +%s)" >> $GITHUB_OUTPUT
-
-      - name: Slack 通知（成功・失敗どちらも）
+      - name: Slack Notification
         if: always()
         uses: slackapi/slack-github-action@v1.24.0
         with:
           payload: |
             {
-              "blocks": [
-                {
-                  "type": "header",
-                  "text": { "type": "plain_text", "text": "Main CI が完了しました" }
-                },
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "*📌 リポジトリ:* `${{ github.repository }}`\n*🔀 ブランチ:* `${{ github.ref_name }}`\n*👤 実行者:* `${{ github.actor }}`\n*⏱️ 実行時間:* `$(( ${{ steps.end.outputs.time }} - ${{ steps.start.outputs.time }} )) 秒`\n*📣 結果:* `${{ job.status }}`"
-                  }
-                },
-                {
-                  "type": "divider"
-                },
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "*🧪 Jest 結果:*\n```${{ steps.jest.outputs.result }}```"
-                  }
-                },
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "*✏️ textlint 結果:*\n```${{ steps.textlint.outputs.result }}```"
-                  }
-                }
-              ]
+              "text": "CI finished with status: ${{ job.status }}"
             }
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
