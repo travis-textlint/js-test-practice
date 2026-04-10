@@ -1,44 +1,25 @@
-- name: Run Textlint
-  run: |
-    npx textlint ./test.md > textlint_result.txt || true
+name: CI
 
-- name: Trim Textlint result
-  id: textlint
-  run: |
-    head -n 50 textlint_result.txt > textlint_trimmed.txt
-    # JSON で壊れないようにエスケープ
-    ESCAPED=$(sed 's/\\/\\\\/g; s/"/\\"/g' textlint_trimmed.txt)
-    echo "result=$ESCAPED" >> $GITHUB_OUTPUT
+on:
+  push:
+    branches: [main]
+  pull_request:
 
-- name: Slack Notification
-  if: always()
-  uses: slackapi/slack-github-action@v1.24.0
-  with:
-    payload: |
-      {
-        "blocks": [
-          {
-            "type": "section",
-            "text": {
-              "type": "mrkdwn",
-              "text": "*CI Result:* `${{ job.status }}`"
-            }
-          },
-          {
-            "type": "section",
-            "text": {
-              "type": "mrkdwn",
-              "text": "*Textlint Result (first 50 lines):*\n```${{ steps.textlint.outputs.result }}```"
-            }
-          },
-          {
-            "type": "section",
-            "text": {
-              "type": "mrkdwn",
-              "text": "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View full Textlint result>"
-            }
-          }
-        ]
-      }
-  env:
-    SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+jobs:
+  main-check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run Textlint
+        run: npx textlint ./test.md || true
