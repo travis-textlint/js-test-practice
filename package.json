@@ -9,8 +9,14 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "install": "^0.13.0",
     "jest": "^30.3.0",
+    "npm": "^11.12.1",
     "textlint": "^15.5.2",
+    "textlint-rule-ja-no-mixed-period": "^3.0.2",
+    "textlint-rule-no-dead-link": "^6.2.1",
+    "textlint-rule-no-todo": "^2.0.1",
+    "textlint-rule-preset-ja-spacing": "^2.4.3",
     "textlint-rule-preset-ja-technical-writing": "^12.0.2"
   },
   "directories": {
