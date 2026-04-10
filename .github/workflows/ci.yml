@@ -47,21 +47,24 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "*リポジトリ:* ${{ github.repository }}\n*コミット:* ${{ github.sha }}\n*実行者:* ${{ github.actor }}"
+                    "text": "CI が完了いたしました。\n\n📌 *リポジトリ:* ${{ github.repository }}\n🔢 *コミット:* ${{ github.sha }}\n👤 *実行者:* ${{ github.actor }}"
                   }
                 },
                 {
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "*📊 カバレッジ（Lines）:* ${{ steps.coverage.outputs.lines }}%"
+                    "text": "📊 *カバレッジ（Lines）:* ${{ steps.coverage.outputs.lines }}%"
                   }
                 },
                 {
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": ${{ steps.coverage.outputs.lines < 80 && '"⚠️ *警告:* カバレッジが 80% を下回っています！"' || '"🎉 カバレッジは基準を満たしています！"' }}
+                    "text":
+                      ${{ steps.coverage.outputs.lines < 90 &&
+                      '"⚠️ *注意:* カバレッジが 90% を下回っています。品質向上のため、追加のテストをご検討ください。"' ||
+                      '"🎉 *良いニュース:* カバレッジは 90% 以上です！素晴らしい品質です！"' }}
                   }
                 }
               ]
