@@ -41,4 +41,19 @@ jobs:
         id: end
         run: echo "time=$(date +%s)" >> $GITHUB_OUTPUT
 
-      -
+      - name: Slack 通知（失敗時のみ）
+        if: failure()
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          payload: |
+            {
+              "blocks": [
+                {
+                  "type": "header",
+                  "text": { "type": "plain_text", "text": "🚨 PR CI が失敗しました" }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "ご確認をお願いいたします。\n\n📌 *リポジトリ:* ${{ github.repository }}\n📝 *PR タイトル:* ${{ github.event.pull_request.title }}\n🔗 *PR URL:* ${{ github.event.pull_request.html_url }}\n💬 *コミットメッセージ:* ${{ github.event.pull_request.title }}\n👤 *実行者:* ${{ github.actor }}\n📄 *変更ファイル数:* ${{ steps.diff.outputs.files }}\n📊 *差分行数:* ${{ steps.diff.outputs.lines }}\n⏱️ *実行時間:* $(( ${{ steps.end.outputs.time }} - ${{ steps.start.outputs.time }} )) 秒\n🔍 *実行ログ:* ${{ github.server_url }}/${{ github.repository }}/actions
