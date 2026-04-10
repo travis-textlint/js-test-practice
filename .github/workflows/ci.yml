@@ -25,12 +25,11 @@ jobs:
         run: |
           npx textlint "**/*.md" > textlint_result.txt || true
 
-      - name: Trim Textlint result
-        id: textlint
-        run: |
-          head -n 50 textlint_result.txt > textlint_trimmed.txt
-          ESCAPED=$(sed 's/\\/\\\\/g; s/"/\\"/g' textlint_trimmed.txt)
-          echo "result=$ESCAPED" >> $GITHUB_OUTPUT
+      - name: Upload Textlint result as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: textlint-result
+          path: textlint_result.txt
 
       - name: Slack Notification
         if: always()
@@ -38,29 +37,7 @@ jobs:
         with:
           payload: |
             {
-              "blocks": [
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "*CI Result:* `${{ job.status }}`"
-                  }
-                },
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "*Textlint Result (first 50 lines):*\n```${{ steps.textlint.outputs.result }}```"
-                  }
-                },
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View full Textlint result>"
-                  }
-                }
-              ]
+              "text": "CI finished with status: ${{ job.status }}\nTextlint result is available as an artifact.\n${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
             }
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
