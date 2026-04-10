@@ -25,6 +25,9 @@ jobs:
         run: |
           npx textlint "**/*.md" > textlint_result.txt || true
 
+      - name: Show Textlint result in log
+        run: cat textlint_result.txt
+
       - name: Upload Textlint result as artifact
         uses: actions/upload-artifact@v4
         with:
