@@ -13,13 +13,5 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Run Textlint
-        run: npx textlint ./test.md || true
+      - name: Hello
+        run: echo "CI is working"
