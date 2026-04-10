@@ -39,7 +39,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "*リポジトリ:* ${{ github.repository }}\n*PR タイトル:* ${{ github.event.pull_request.title }}\n*実行者:* ${{ github.actor }}\n*ブランチ:* ${{ github.head_ref }}"
+                    "text": "ご確認をお願いいたします。\n\n📌 *リポジトリ:* ${{ github.repository }}\n📝 *PR タイトル:* ${{ github.event.pull_request.title }}\n👤 *実行者:* ${{ github.actor }}\n🌿 *ブランチ:* ${{ github.head_ref }}"
                   }
                 }
               ]
