@@ -26,15 +26,21 @@ jobs:
       - name: Jest テスト（カバレッジ付き）
         run: npm test -- --coverage
 
-      - name: textlint 実行
-        run: npm run lint:text
+      - name: textlint 実行（docs/ 配下のみ）
+        run: textlint "docs/**/*.md"
         continue-on-error: true
 
       - name: カバレッジ読み取り
         id: coverage
         run: |
           LINES=$(cat coverage/coverage-summary.json | jq '.total.lines.pct')
+          STATEMENTS=$(cat coverage/coverage-summary.json | jq '.total.statements.pct')
+          FUNCTIONS=$(cat coverage/coverage-summary.json | jq '.total.functions.pct')
+          BRANCHES=$(cat coverage/coverage-summary.json | jq '.total.branches.pct')
           echo "lines=$LINES" >> $GITHUB_OUTPUT
+          echo "statements=$STATEMENTS" >> $GITHUB_OUTPUT
+          echo "functions=$FUNCTIONS" >> $GITHUB_OUTPUT
+          echo "branches=$BRANCHES" >> $GITHUB_OUTPUT
 
       - name: 終了時間を記録
         id: end
@@ -62,18 +68,24 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "📊 *カバレッジ（Lines）:* ${{ steps.coverage.outputs.lines }}%\n\n${
-                      ${{ steps.coverage.outputs.lines }} < 90
-                      && "⚠️ *注意:* カバレッジが 90% を下回っています。品質向上のため、追加のテストをご検討ください。"
-                      || "🎉 *素晴らしいです！* カバレッジは 90% 以上です！"
-                    }"
+                    "text": "📊 *カバレッジ*\nLines: ${{ steps.coverage.outputs.lines }}%\nStatements: ${{ steps.coverage.outputs.statements }}%\nFunctions: ${{ steps.coverage.outputs.functions }}%\nBranches: ${{ steps.coverage.outputs.branches }}%"
                   }
                 },
                 {
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "📈 *カバレッジ グラフ風表示*\n```\nLines:      [${{ steps.coverage.outputs.lines }}%]\n目標:       [90%]\n```"
+                    "text":
+                      ${{ steps.coverage.outputs.lines < 90 &&
+                      '"⚠️ *注意:* Lines カバレッジが 90% を下回っています。品質向上のため、追加のテストをご検討ください。"' ||
+                      '"🎉 *素晴らしいです！* Lines カバレッジは 90% 以上です！"' }}
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "📈 *カバレッジ グラフ風表示*\n```\nLines:      [${{ steps.coverage.outputs.lines }}%]\nStatements: [${{ steps.coverage.outputs.statements }}%]\nFunctions:  [${{ steps.coverage.outputs.functions }}%]\nBranches:   [${{ steps.coverage.outputs.branches }}%]\n目標:       [90%]\n```"
                   }
                 }
               ]
