@@ -26,7 +26,7 @@ jobs:
         run: npm test
 
       - name: textlint 実行（docs/ 配下のみ）
-        run: textlint "**/*.md"
+        run: textlint "docs/**/*.md" "test.md"
         continue-on-error: true
 
       - name: 差分情報取得
