@@ -1,18 +1,17 @@
-name: CI
+name: Main CI
 
 on:
   push:
     branches: [ main ]
-  pull_request:
 
 jobs:
-  build:
+  main-check:
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Use Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -20,20 +19,51 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run tests
-        run: npm test
+      - name: Run tests with coverage
+        run: npm test -- --coverage
 
       - name: Run textlint
         run: npm run lint:text
         continue-on-error: true
 
-      - name: Notify Slack
+      - name: Read coverage summary
+        id: coverage
+        run: |
+          LINES=$(cat coverage/coverage-summary.json | jq '.total.lines.pct')
+          STATEMENTS=$(cat coverage/coverage-summary.json | jq '.total.statements.pct')
+          FUNCTIONS=$(cat coverage/coverage-summary.json | jq '.total.functions.pct')
+          BRANCHES=$(cat coverage/coverage-summary.json | jq '.total.branches.pct')
+          echo "lines=$LINES" >> $GITHUB_OUTPUT
+          echo "statements=$STATEMENTS" >> $GITHUB_OUTPUT
+          echo "functions=$FUNCTIONS" >> $GITHUB_OUTPUT
+          echo "branches=$BRANCHES" >> $GITHUB_OUTPUT
+
+      - name: Slack 通知（成功・失敗どちらも）
         if: always()
         uses: slackapi/slack-github-action@v1.24.0
         with:
           payload: |
             {
-              "text": "CI finished for ${{ github.repository }}: ${{ job.status }}"
+              "blocks": [
+                {
+                  "type": "header",
+                  "text": { "type": "plain_text", "text": "CI 結果: ${{ job.status }}" }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*リポジトリ:* ${{ github.repository }}\n*コミット:* ${{ github.sha }}\n*実行者:* ${{ github.actor }}"
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*📊 カバレッジ*\nLines: ${{ steps.coverage.outputs.lines }}%\nStatements: ${{ steps.coverage.outputs.statements }}%\nFunctions: ${{ steps.coverage.outputs.functions }}%\nBranches: ${{ steps.coverage.outputs.branches }}%"
+                  }
+                }
+              ]
             }
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
