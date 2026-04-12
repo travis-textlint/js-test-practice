@@ -23,7 +23,7 @@ jobs:
 
       - name: Run Textlint
         run: |
-          npx textlint "**/*.md" > textlint_result.txt || true
+          npx textlint '**/*.md' > textlint_result.txt || true
 
       - name: Show Textlint result in log
         run: cat textlint_result.txt
