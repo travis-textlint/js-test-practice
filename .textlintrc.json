@@ -2,6 +2,9 @@
   "filters": {
     "comments": true
   },
+  "plugins": {
+    "@textlint/markdown": true
+  },
   "rules": {
     "preset-ja-technical-writing": true,
     "preset-ja-spacing": true,
