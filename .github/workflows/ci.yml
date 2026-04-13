@@ -24,7 +24,7 @@ jobs:
       - name: Check textlint version
         run: npx textlint --version
 
-      - name: Debug: list markdown files
+      - name: Debug list markdown files
         run: find . -name "*.md" -print
 
       - name: Run Textlint
