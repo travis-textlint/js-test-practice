@@ -29,7 +29,6 @@ jobs:
 
       - name: Run Textlint
         run: |
-          # .md が存在する場合のみ textlint を実行
           FILES=$(find . -name "*.md")
           if [ -z "$FILES" ]; then
             echo "No markdown files found." > textlint_result.txt
