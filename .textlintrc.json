@@ -4,6 +4,10 @@
     "preset-ja-spacing": true,
     "ja-no-mixed-period": true,
     "no-todo": true,
-    "no-dead-link": true
+    "no-dead-link": true,
+    "sentence-length": { "max": 100 },
+    "ja-no-abusage": true,
+    "ja-no-redundant-expression": true,
+    "max-kanji-continuous-len": { "max": 5 }
   }
 }
