@@ -33,7 +33,7 @@ jobs:
           if [ -z "$FILES" ]; then
             echo "No markdown files found." > textlint_result.txt
           else
-            echo "$FILES" | xargs npx textlint > textlint_result.txt
+            echo "$FILES" | xargs -r npx textlint > textlint_result.txt
           fi
 
       - name: Show Textlint result in log
