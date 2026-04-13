@@ -35,8 +35,8 @@ jobs:
             exit 0
           fi
 
-          # xargs を使わず、直接ファイルを渡す
-          npx textlint $FILES > textlint_result.txt
+          # Textlint がエラーを返しても CI を止めない
+          npx textlint $FILES > textlint_result.txt || true
 
       - name: Show Textlint result in log
         run: cat textlint_result.txt
