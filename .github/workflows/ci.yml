@@ -32,9 +32,9 @@ jobs:
           FILES=$(find . -name "*.md")
           if [ -z "$FILES" ]; then
             echo "No markdown files found." > textlint_result.txt
-          else
-            echo "$FILES" | xargs -r npx textlint > textlint_result.txt
+            exit 0
           fi
+          echo "$FILES" | xargs -r npx textlint > textlint_result.txt
 
       - name: Show Textlint result in log
         run: cat textlint_result.txt
