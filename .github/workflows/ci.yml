@@ -25,21 +25,18 @@ jobs:
         run: npx textlint --version
 
       - name: Debug list markdown files
-        run: find . -name "*.md" -print
+        run: find . -type f -name "*.md" -print
 
       - name: Run Textlint
         run: |
-          # Markdown ファイルを配列として安全に取得
-          mapfile -t FILES < <(find . -name "*.md")
-
-          # 0 件なら正常終了
-          if [ ${#FILES[@]} -eq 0 ]; then
+          FILES=$(find . -type f -name "*.md")
+          if [ -z "$FILES" ]; then
             echo "No markdown files found." > textlint_result.txt
             exit 0
           fi
 
-          # 配列を 1 行ずつ textlint に渡す（xargs 不使用）
-          printf "%s\n" "${FILES[@]}" | npx textlint > textlint_result.txt
+          # xargs を使わず、直接ファイルを渡す
+          npx textlint $FILES > textlint_result.txt
 
       - name: Show Textlint result in log
         run: cat textlint_result.txt
