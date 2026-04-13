@@ -21,9 +21,13 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Check textlint version
+        run: npx textlint --version
+
       - name: Run Textlint
         run: |
-          npx textlint '**/*.md' > textlint_result.txt || true
+          # Markdown を確実に拾うため find を使用
+          find . -name "*.md" -print0 | xargs -0 npx textlint > textlint_result.txt
 
       - name: Show Textlint result in log
         run: cat textlint_result.txt
