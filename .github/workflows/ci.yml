@@ -24,10 +24,18 @@ jobs:
       - name: Check textlint version
         run: npx textlint --version
 
+      - name: Debug: list markdown files
+        run: find . -name "*.md" -print
+
       - name: Run Textlint
         run: |
-          # Markdown を確実に拾うため find を使用
-          find . -name "*.md" -print0 | xargs -0 npx textlint > textlint_result.txt
+          # .md が存在する場合のみ textlint を実行
+          FILES=$(find . -name "*.md")
+          if [ -z "$FILES" ]; then
+            echo "No markdown files found." > textlint_result.txt
+          else
+            echo "$FILES" | xargs npx textlint > textlint_result.txt
+          fi
 
       - name: Show Textlint result in log
         run: cat textlint_result.txt
