@@ -47,11 +47,12 @@ jobs:
 
       - name: Slack Notification
         if: always()
+        env:
+          FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         uses: slackapi/slack-github-action@v1.24.0
         with:
           payload: |
             {
               "text": "CI finished with status: ${{ job.status }}\nTextlint result is available as an artifact.\n${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
             }
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
