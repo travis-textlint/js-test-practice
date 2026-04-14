@@ -53,5 +53,4 @@ jest-cache/
 jest-results.json
 
 # Ignore lock files if needed (optional)
-# package-lock.json
 # yarn.lock
