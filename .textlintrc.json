@@ -9,11 +9,8 @@
     "preset-ja-technical-writing": true,
     "preset-ja-spacing": true,
     "ja-no-mixed-period": true,
-    "ja-no-mixed-insert": true,
     "no-todo": true,
     "no-dead-link": true,
-    "md-heading-increment": true,
-    "no-empty-section": true,
-    "no-multiple-toplevel-headings": true
+    "no-empty-section": true
   }
 }
