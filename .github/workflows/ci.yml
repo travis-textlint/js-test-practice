@@ -24,18 +24,21 @@ jobs:
       - name: Check textlint version
         run: npx textlint --version
 
-      - name: Debug list markdown files
-        run: find . -type f -name "*.md" -print
+      - name: Debug list target files
+        run: |
+          echo "Markdown files:"
+          find . -type f -name "*.md" ! -path "./node_modules/*"
+          echo "AsciiDoc files:"
+          find . -type f -name "*.adoc" ! -path "./node_modules/*"
 
       - name: Run Textlint
         run: |
-          FILES=$(find . -type f -name "*.md")
+          FILES=$(find . -type f \( -name "*.md" -o -name "*.adoc" \) ! -path "./node_modules/*")
           if [ -z "$FILES" ]; then
-            echo "No markdown files found." > textlint_result.txt
+            echo "No markdown or adoc files found." > textlint_result.txt
             exit 0
           fi
 
-          # Textlint がエラーを返しても CI を止めない
           npx textlint $FILES > textlint_result.txt || true
 
       - name: Show Textlint result in log
