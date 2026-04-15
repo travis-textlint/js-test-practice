@@ -1,4 +1,4 @@
-version: 1
+ version: 1
 rules:
   - expected: ゴム足（ネットワーク機器取説用)
     pattern:  レッグ
