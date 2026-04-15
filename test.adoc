@@ -1,0 +1,106 @@
+version: 1
+rules:
+  - expected: ゴム足（ネットワーク機器取説用)
+    pattern:  レッグ
+  - expected: クロックリーダー（PA機器取説用語）
+    pattern:  クロックマスター
+  - expected: クロックフォロワー（PA機器取説用語）
+    pattern:  クロックスレーブ
+  - expected: ACアダプター（ネットワーク機器取説用語）
+    pattern:  ACアダプタ
+
+  # - expected: ルーター（ネットワーク機器取説用語）
+  #   pattern:  ルータ
+
+  - expected: ルーター
+    pattern:  /ルータ(?!ー)/
+    specs:
+      - from: ルータ
+        to:   ルーター
+  - expected: ウェブサイト（ネットワーク機器取説用語）
+    pattern:  Webサイト
+  - expected: ウェブサイト（ネットワーク機器取説用語）
+    pattern:  WEBサイト
+  - expected: ウェブ上（ネットワーク機器取説用語）
+    pattern:  Web上
+  - expected: Web GUI（ネットワーク機器取説用語）
+    pattern:  WebGUI
+  - expected: インジケーター（ネットワーク機器取説用語）
+    pattern:  ランプ
+  - expected: ハブ（ネットワーク機器取説用語）
+    pattern:  HUB
+  - expected: 取り付け（ネットワーク機器取説用語）
+    pattern:  取付
+  - expected: 製品ラベル（ネットワーク機器取説用語）
+    pattern:  銘板
+  - expected: 製品ラベル（ネットワーク機器取説用語）
+    pattern:  底面ラベル
+  - expected: ONUスロット（ネットワーク機器取説用語）
+    pattern:  ポート
+  - expected: 別売品（ネットワーク機器取説用語）
+    pattern:  オプション
+  - expected: 別売品（ネットワーク機器取説用語）
+    pattern:  オプション品
+  - expected: 製品ラベル（ネットワーク機器取説用語）
+    pattern:  ラベル
+  - expected: ACアダプター（ネットワーク機器取説用語）
+    pattern:  電源アダプター
+  - expected: プロキシ―
+    pattern:  /プロキシ(?!ー)/
+    specs:
+      - from: プロキシ
+        to:   プロキシ―
+  # - expected: プロキシ―（ネットワーク機器取説用語）
+  #   pattern:  プロキシ
+  - expected: お買い上げ（ネットワーク機器取説用語）
+    pattern:  ご購入
+  - expected: 有料（ネットワーク機器取説用語）
+    pattern:  有償
+  - expected: 無料（ネットワーク機器取説用語）
+    pattern:  無償
+  - expected: インターフェース（ネットワーク機器取説用語）
+    pattern:  インタフェース
+  - expected: インターフェース（ネットワーク機器取説用語）
+    pattern:  インターフェイス
+  - expected: 許可リスト
+    pattern:  ブラックリスト
+  - expected: 注意喚起用語
+    pattern:  業者
+  - expected: 注意喚起用語（ネットワーク機器取説用語）
+    pattern:  Blacklist
+  - expected: 注意喚起用語（ネットワーク機器取説用語）
+    pattern:  blacklist
+  - expected: 注意喚起用語（ネットワーク機器取説用語）
+    pattern:  Master
+  - expected: 注意喚起用語（ネットワーク機器取説用語）
+    pattern:  master
+  - expected: 注意喚起用語（ネットワーク機器取説用語）
+    pattern:  マスター
+  - expected: 注意喚起用語（ネットワーク機器取説用語）
+    pattern:  Slave
+  - expected: 注意喚起用語（ネットワーク機器取説用語）
+    pattern:  slave
+  - expected: 注意喚起用語（ネットワーク機器取説用語）
+    pattern:  スレーブ
+  - expected: 注意喚起用語（ネットワーク機器取説用語）
+    pattern:  black
+  - expected: 注意喚起用語（ネットワーク機器取説用語）
+    pattern:  Black
+  - expected: 注意喚起用語（ネットワーク機器取説用語）
+    pattern:  ブラック
+  - expected: 注意喚起用語（ネットワーク機器取説用語）
+    pattern:  黒
+  - expected: 注意喚起用語（ネットワーク機器取説用語）
+    pattern:  White
+  - expected: 注意喚起用語（ネットワーク機器取説用語）
+    pattern:  white
+  - expected: 注意喚起用語（ネットワーク機器取説用語）
+    pattern:  白
+
+私が食べたものが腐っているはずがない
+
+句読点、が、とても、多い、行、だよ
+今日は早朝から出発したが、定刻には間に合わなかったが、無事会場に到着した。
+かな漢字変換により漢字が多用される傾向がある。しかし漢字の多用が読みにくさをもたらす側面は否定できない。
+確かにそういった懸念はない事はない。
+お刺身を食べれない。
