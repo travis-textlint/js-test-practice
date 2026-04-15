@@ -50,6 +50,20 @@ jobs:
           name: textlint-result
           path: textlint_result.txt
 
+      # -----------------------------
+      # Teams 通知（Incoming Webhook）
+      # -----------------------------
+      - name: Teams Notification
+        if: always()
+        run: |
+          MESSAGE="CI finished with status: ${{ job.status }}%0AResult: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          curl -H "Content-Type: application/json" \
+               -d "{\"text\": \"${MESSAGE}\"}" \
+               ${{ secrets.TEAMS_WEBHOOK_URL }}
+
+      # -----------------------------
+      # Slack 通知（既存のまま）
+      # -----------------------------
       - name: Slack Notification
         if: always()
         uses: slackapi/slack-github-action@v1.26.0
